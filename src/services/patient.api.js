@@ -27,7 +27,7 @@ export const searchPatientsByNameRequest = (name, limit = 10, skip = 0) =>
 // Filtros individuales (por si deseas usarlos directo)
 export const filterByBloodTypeRequest = (type, limit = 10, skip = 0) =>
   api.post('/v1/patients/filter/bloodType', {
-    type,
+    bloodType,
     limit,
     skip
   })

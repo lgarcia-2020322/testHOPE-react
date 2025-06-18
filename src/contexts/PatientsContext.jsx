@@ -108,25 +108,24 @@ export const PatientsProvider = ({ children }) => {
   }
 
   const filterByBloodType = async (type) => {
-    try {
-      const res = await filterPatientsRequest('bloodType', type)
-      const filtered = res.data.patients.filter((p) =>
-        p.bloodType?.toLowerCase() === type.toLowerCase()
-      )
+  try {
+    const res = await filterPatientsRequest('bloodType', type)
+    const filtered = res.data.patients
 
-      if (!filtered.length) {
-        toast.error('No se encontraron pacientes con ese tipo de sangre')
-        setPatients([])
-        return
-      }
-
-      setPatients(filtered)
-      toast.success('Pacientes filtrados por tipo de sangre')
-    } catch (err) {
-      toast.error('Error al filtrar por tipo de sangre')
-      console.error(err)
+    if (!filtered.length) {
+      toast.error('No se encontraron pacientes con ese tipo de sangre')
+      setPatients([])
+      return
     }
+
+    setPatients(filtered)
+    toast.success('Pacientes filtrados por tipo de sangre')
+  } catch (err) {
+    toast.error('Error al filtrar por tipo de sangre')
+    console.error(err)
   }
+}
+
 
   return (
     <PatientsContext.Provider

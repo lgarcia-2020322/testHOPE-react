@@ -14,10 +14,10 @@ export const usernameValidationMessage = 'El nombre de usuario debe tener entre 
 
 // Validación de password
 export const validatePassword = (password) => {
-  const regex = /^\S{6,12}$/
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
   return regex.test(password)
 }
-export const passwordValidationMessage = 'La contraseña debe tener entre 6 y 12 caracteres, sin espacios'
+export const passwordValidationMessage = 'La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula, un número y un símbolo'
 
 // Confirmación de contraseña
 export const validatePassConfirm = (password, passConfirm) => {

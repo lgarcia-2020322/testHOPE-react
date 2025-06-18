@@ -1,13 +1,22 @@
 import { useState } from 'react'
+import { Navigate } from 'react-router-dom'
 import { usePatients } from '../shared/hooks/usePatients'
 import { PatientCard } from '../components/PatientCard'
 import { PatientForm } from '../components/PatientForm'
 
 export const PatientsPage = () => {
+  const user = JSON.parse(localStorage.getItem('user'))
+  const role = user?.user?.role
+
+  if (role !== 'ADMIN') {
+    return <Navigate to="/dashboard" />
+  }
+
   const {
     patients,
     searchPatients,
     filterPatients,
+    filterByBloodType,
     deletePatient
   } = usePatients()
 
@@ -26,6 +35,11 @@ export const PatientsPage = () => {
     await filterPatients(filterType, filterValue.trim())
   }
 
+  const handleBloodTypeFilter = async (type) => {
+    if (!type) return
+    await filterByBloodType(type)
+  }
+
   const handleDelete = async (id) => {
     const confirm = window.confirm('¿Estás seguro de eliminar este paciente?')
     if (confirm) await deletePatient(id)
@@ -35,6 +49,7 @@ export const PatientsPage = () => {
     <div className="dashboard-main">
       <h2>Gestión de Pacientes</h2>
 
+      {/* Búsqueda por nombre */}
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
         <input
           type="text"
@@ -43,13 +58,15 @@ export const PatientsPage = () => {
           onChange={(e) => setSearchValue(e.target.value)}
         />
         <button onClick={handleSearch}>Buscar</button>
+      </div>
 
+      {/* Filtro dinámico por tipo y valor */}
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
         >
           <option value="">Filtrar por...</option>
-          <option value="bloodType">Tipo de sangre</option>
           <option value="disease">Enfermedad crónica</option>
           <option value="allergy">Alergia</option>
           <option value="gender">Género</option>
@@ -64,6 +81,25 @@ export const PatientsPage = () => {
         <button onClick={handleFilter}>Filtrar</button>
       </div>
 
+      {/* Filtro específico por tipo de sangre */}
+      <div style={{ marginBottom: '1rem' }}>
+        <select
+          defaultValue=""
+          onChange={(e) => handleBloodTypeFilter(e.target.value)}
+        >
+          <option value="">Filtrar por tipo de sangre</option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+        </select>
+      </div>
+
+      {/* Lista de pacientes */}
       {patients.length === 0 ? (
         <p>No hay pacientes disponibles</p>
       ) : (
@@ -78,6 +114,7 @@ export const PatientsPage = () => {
         ))
       )}
 
+      {/* Modal para editar paciente */}
       {selectedPatientId && (
         <div className="modal-overlay" onClick={() => setSelectedPatientId(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
